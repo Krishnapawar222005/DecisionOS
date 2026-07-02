@@ -1,39 +1,62 @@
-import { LayoutDashboard, Bot, FileText, Settings, AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import {
+  LayoutDashboard,
+  Bot,
+  FileText,
+  Settings,
+  AlertTriangle,
+} from "lucide-react";
+
 import { Logo } from "@/components/shared/logo";
 
 export function Sidebar() {
   return (
-    <aside className="w-72 h-screen border-r bg-white">
-      <div className="p-6 border-b">
+    <aside className="h-screen w-72 border-r bg-white">
+      <div className="border-b p-6">
         <Logo />
       </div>
 
-      <nav className="p-4 space-y-2">
+      <nav className="space-y-2 p-4">
 
-        <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-slate-100">
+        <Link
+          href="/dashboard"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-slate-100"
+        >
           <LayoutDashboard size={18} />
           Dashboard
-        </button>
+        </Link>
 
-        <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-slate-100">
+        <Link
+          href="/copilot"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-slate-100"
+        >
           <Bot size={18} />
           AI Copilot
-        </button>
+        </Link>
 
-        <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-slate-100">
+        <Link
+          href="/incidents"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-slate-100"
+        >
           <AlertTriangle size={18} />
           Incidents
-        </button>
+        </Link>
 
-        <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-slate-100">
+        <Link
+          href="/reports"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-slate-100"
+        >
           <FileText size={18} />
           Reports
-        </button>
+        </Link>
 
-        <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium hover:bg-slate-100">
+        <Link
+          href="/settings"
+          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition hover:bg-slate-100"
+        >
           <Settings size={18} />
           Settings
-        </button>
+        </Link>
 
       </nav>
     </aside>
