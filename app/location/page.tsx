@@ -11,6 +11,7 @@ import AIRiskPanel from "@/components/location/AIRiskPanel";
 import ExecutiveReport from "@/components/location/ExecutiveReport";
 import AnalyticsDashboard from "@/components/location/AnalyticsDashboard";
 import DashboardKPIs from "@/components/location/DashboardKPIs";
+
 import { getWeather } from "@/lib/weather";
 import { getAQI } from "@/lib/aqi";
 import { getAIRisk } from "@/lib/aiRisk";
@@ -36,8 +37,6 @@ interface AQIData {
 }
 
 export default function LocationPage() {
-  const [search, setSearch] = useState("");
-
   const [loading, setLoading] = useState(false);
 
   const [position, setPosition] = useState({
@@ -65,10 +64,6 @@ export default function LocationPage() {
 
   const [aiReport, setAIReport] = useState("");
 
-  async function onSearch() {
-    alert("Location search will be added in a later phase.");
-  }
-
   function onCurrentLocation() {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported.");
@@ -88,15 +83,15 @@ export default function LocationPage() {
         });
 
         try {
-          // Fetch Weather
+          // Weather
           const weatherData = await getWeather(lat, lng);
           setWeather(weatherData);
 
-          // Fetch AQI
+          // AQI
           const aqiData = await getAQI(lat, lng);
           setAQI(aqiData);
 
-          // Generate AI Report
+          // AI Report
           const ai = await getAIRisk({
             temp: weatherData.temp,
             humidity: weatherData.humidity,
@@ -107,7 +102,7 @@ export default function LocationPage() {
 
           setAIReport(ai.report);
 
-          // Save Live History
+          // Save History
           saveHistory({
             time: new Date().toLocaleTimeString([], {
               hour: "2-digit",
@@ -118,7 +113,6 @@ export default function LocationPage() {
             wind: weatherData.wind,
             aqi: aqiData.aqi,
           });
-
         } catch (error) {
           console.error(error);
         }
@@ -147,10 +141,7 @@ export default function LocationPage() {
       <div className="mx-auto max-w-7xl space-y-8">
 
         <SearchBar
-          search={search}
-          setSearch={setSearch}
           loading={loading}
-          onSearch={onSearch}
           onCurrentLocation={onCurrentLocation}
         />
 
@@ -181,23 +172,24 @@ export default function LocationPage() {
         />
 
         <ExecutiveReport
-  weather={weather}
-  aqi={{
-    aqi: aqi.aqi,
-    pm25: aqi.pm25,
-    pm10: aqi.pm10,
-  }}
-  aiReport={aiReport}
-/>
+          weather={weather}
+          aqi={{
+            aqi: aqi.aqi,
+            pm25: aqi.pm25,
+            pm10: aqi.pm10,
+          }}
+          aiReport={aiReport}
+        />
 
-<DashboardKPIs
-  temp={weather.temp}
-  humidity={weather.humidity}
-  wind={weather.wind}
-  aqi={aqi.aqi}
-/>
+        <DashboardKPIs
+          temp={weather.temp}
+          humidity={weather.humidity}
+          wind={weather.wind}
+          aqi={aqi.aqi}
+        />
 
-<AnalyticsDashboard />
+        <AnalyticsDashboard />
+
       </div>
     </main>
   );
