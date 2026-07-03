@@ -7,7 +7,12 @@ const ai = new GoogleGenAI({
 
 export async function POST(req: Request) {
   try {
-    const { prompt, image, mimeType } = await req.json();
+    const {
+      prompt,
+      image,
+      mimeType,
+      pdfText,
+    } = await req.json();
 
     if (!image) {
       return NextResponse.json(
@@ -29,19 +34,41 @@ export async function POST(req: Request) {
               text: `
 You are DecisionOS AI.
 
-Analyze this incident image together with the user's description.
+Analyze ALL available information.
 
-Description:
+========================
+INCIDENT DESCRIPTION
+========================
 ${prompt || "No description provided."}
 
-Return:
+========================
+SUPPORTING PDF CONTENT
+========================
+${pdfText || "No PDF uploaded."}
+
+========================
+TASK
+========================
+
+Analyze the uploaded image together with the incident description and the PDF.
+
+Return your answer in this exact format:
 
 Summary:
+
 Risk Level:
+
 Visible Hazards:
+
 Recommendations:
+- Recommendation 1
+- Recommendation 2
+- Recommendation 3
+
+Resources Required:
+
 Confidence:
-              `,
+`,
             },
             {
               inlineData: {

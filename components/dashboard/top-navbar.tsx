@@ -1,34 +1,51 @@
+"use client";
+
 import { Bell, Search } from "lucide-react";
 
 export function TopNavbar() {
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-white px-8">
+    <header className="flex flex-col gap-4 border-b border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+
+      {/* Title */}
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           Dashboard
         </h2>
       </div>
 
-      <div className="flex items-center gap-4">
+      {/* Right Side */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
 
-        <div className="flex items-center rounded-lg border px-3 py-2">
-          <Search size={18} className="text-slate-400" />
+        {/* Search */}
+        <div className="flex w-full items-center rounded-xl border border-border bg-background px-3 py-2 sm:w-80">
+
+          <Search
+            size={18}
+            className="text-muted-foreground"
+          />
 
           <input
+            type="text"
             placeholder="Search..."
-            className="ml-2 outline-none text-sm"
+            className="ml-2 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
+
         </div>
 
-        <button className="rounded-lg border p-2 hover:bg-slate-100">
+        {/* Notification */}
+        <button
+          className="flex h-11 w-11 items-center justify-center rounded-xl border border-border transition hover:bg-accent"
+        >
           <Bell size={18} />
         </button>
 
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-semibold">
+        {/* Avatar */}
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 font-semibold text-white">
           K
         </div>
 
       </div>
+
     </header>
   );
 }

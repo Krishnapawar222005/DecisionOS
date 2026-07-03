@@ -14,25 +14,40 @@ export default function IncidentsPage() {
 
     const [pdf, setPdf] = useState<File | null>(null);
     const [pdfText, setPdfText] = useState("");
+    const [extractingPdf, setExtractingPdf] = useState(false);
 
     function handleImageSelect(file: File) {
         setImage(file);
         setPreview(URL.createObjectURL(file));
     }
 
-    async function handlePdfChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handlePdfChange(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
 
         if (!file) return;
 
         setPdf(file);
+        setPdfText("");
+    }
+    async function extractPdf() {
+        if (!pdf) {
+            alert("Please upload a PDF first.");
+            return;
+        }
+
+        setExtractingPdf(true);
 
         try {
-            const text = await extractPdfText(file);
+            const text = await extractPdfText(pdf);
+
             setPdfText(text);
+
+            alert("✅ PDF extracted successfully!");
         } catch (error) {
             console.error(error);
-            alert("Failed to read PDF.");
+            alert("❌ Failed to extract PDF.");
+        } finally {
+            setExtractingPdf(false);
         }
     }
 
@@ -141,10 +156,27 @@ export default function IncidentsPage() {
                             className="mt-6 w-full"
                         />
 
+
                         {pdf && (
-                            <p className="mt-4 text-center font-medium text-green-600">
-                                ✅ {pdf.name}
-                            </p>
+                            <>
+                                <p className="mt-4 text-center font-medium text-green-600">
+                                    ✅ {pdf.name}
+                                </p>
+
+                                <button
+                                    onClick={extractPdf}
+                                    disabled={!pdf || extractingPdf}
+                                    className="mt-4 w-full rounded-xl bg-green-600 px-4 py-3 font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                                >
+                                    {extractingPdf ? "Extracting..." : "📄 Extract PDF Text"}
+                                </button>
+
+                                {pdfText && (
+                                    <div className="mt-4 rounded-xl bg-green-50 p-3 text-center text-green-700">
+                                        ✅ PDF text extracted successfully.
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
 

@@ -1,8 +1,15 @@
-import * as pdfjsLib from "pdfjs-dist";
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-
 export async function extractPdfText(file: File): Promise<string> {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+    import.meta.url
+  ).toString();
+
   const buffer = await file.arrayBuffer();
 
   const pdf = await pdfjsLib.getDocument({
