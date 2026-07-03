@@ -1,12 +1,27 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
 
+const apiKey = process.env.GEMINI_API_KEY;
+
+if (!apiKey) {
+  console.error("❌ GEMINI_API_KEY is missing.");
+}
+
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY!,
+  apiKey: apiKey || "",
 });
 
 export async function POST(req: NextRequest) {
   try {
+    if (!apiKey) {
+      return NextResponse.json(
+        {
+          error: "GEMINI_API_KEY is not configured.",
+        },
+        { status: 500 }
+      );
+    }
+
     const body = await req.json();
 
     const prompt = `
@@ -36,10 +51,13 @@ Recommendations:
       report: response.text,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Gemini API Error:", error);
 
     return NextResponse.json(
-      { error: "Failed to generate AI report." },
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to generate AI report.",
+      },
       { status: 500 }
     );
   }
