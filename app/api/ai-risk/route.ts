@@ -3,10 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
-if (!apiKey) {
-  console.error("❌ GEMINI_API_KEY is missing.");
-}
-
 const ai = new GoogleGenAI({
   apiKey: apiKey || "",
 });
@@ -16,7 +12,7 @@ export async function POST(req: NextRequest) {
     if (!apiKey) {
       return NextResponse.json(
         {
-          error: "GEMINI_API_KEY is not configured.",
+          error: "GEMINI_API_KEY is missing in Vercel Environment Variables.",
         },
         { status: 500 }
       );
@@ -27,7 +23,7 @@ export async function POST(req: NextRequest) {
     const prompt = `
 You are an Emergency Management AI.
 
-Analyze these conditions and produce a concise executive risk assessment.
+Analyze the following live conditions and generate a professional executive report.
 
 Temperature: ${body.temp} °C
 Humidity: ${body.humidity} %
@@ -35,7 +31,7 @@ Wind Speed: ${body.wind} m/s
 Weather: ${body.description}
 AQI: ${body.aqi}
 
-Respond ONLY in this format:
+Respond ONLY in the following format:
 
 Risk Level:
 Summary:
@@ -43,20 +39,34 @@ Recommendations:
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents: prompt,
     });
 
     return NextResponse.json({
-      report: response.text,
+      report: response.text ?? "No AI response generated.",
     });
   } catch (error) {
     console.error("Gemini API Error:", error);
 
+    const message =
+      error instanceof Error ? error.message : "Unknown Gemini error.";
+
+    // Handle quota / rate limit errors
+    if (
+      message.includes("RESOURCE_EXHAUSTED") ||
+      message.includes("Quota exceeded") ||
+      message.includes("429")
+    ) {
+      return NextResponse.json({
+        report:
+          "⚠️ AI Analysis is temporarily unavailable because the Gemini free-tier quota has been reached. Live Weather, AQI, and Maps are still working correctly. Please try again later.",
+      });
+    }
+
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to generate AI report.",
+        error: message,
       },
       { status: 500 }
     );
