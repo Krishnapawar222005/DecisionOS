@@ -21,21 +21,60 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const prompt = `
-You are an Emergency Management AI.
+You are DecisionOS AI, an advanced Predictive Decision Intelligence system built for governments, emergency responders, and smart cities.
 
-Analyze the following live conditions and generate a professional executive report.
+Your task is to analyze LIVE environmental conditions and predict what is MOST LIKELY to happen during the NEXT 6 HOURS.
+
+Current Conditions
 
 Temperature: ${body.temp} °C
 Humidity: ${body.humidity} %
 Wind Speed: ${body.wind} m/s
 Weather: ${body.description}
-AQI: ${body.aqi}
+Air Quality Index (AQI): ${body.aqi}
+
+Using these live conditions:
+
+• Predict possible future events.
+• Estimate overall community risk.
+• Explain your reasoning.
+• Recommend preventive actions.
+• Think like an Emergency Operations Center.
 
 Respond ONLY in the following format:
 
-Risk Level:
-Summary:
-Recommendations:
+==================================================
+
+🔮 AI PREDICTIVE DECISION REPORT
+
+Predictive Risk Score:
+(0-100)
+
+Prediction Confidence:
+(0-100%)
+
+Next 6-Hour Outlook:
+(Describe expected conditions.)
+
+Potential Risks:
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+Recommended Actions:
+- Bullet 1
+- Bullet 2
+- Bullet 3
+- Bullet 4
+- Bullet 5
+
+Reasoning:
+(Explain WHY the prediction was made using temperature, humidity, wind, weather and AQI.)
+
+Executive Summary:
+(A concise paragraph suitable for city officials.)
+
+==================================================
 `;
 
     const response = await ai.models.generateContent({
@@ -52,15 +91,29 @@ Recommendations:
     const message =
       error instanceof Error ? error.message : "Unknown Gemini error.";
 
-    // Handle quota / rate limit errors
     if (
       message.includes("RESOURCE_EXHAUSTED") ||
       message.includes("Quota exceeded") ||
       message.includes("429")
     ) {
       return NextResponse.json({
-        report:
-          "⚠️ AI Analysis is temporarily unavailable because the Gemini free-tier quota has been reached. Live Weather, AQI, and Maps are still working correctly. Please try again later.",
+        report: `
+
+🔮 AI Predictive Decision Report
+
+AI Prediction is temporarily unavailable because the Gemini API free quota has been reached.
+
+DecisionOS will continue providing:
+
+✅ Live Weather Monitoring
+✅ Air Quality Monitoring
+✅ Live Location Intelligence
+✅ Emergency Contacts
+✅ Decision Dashboard
+
+Please try again later when AI quota becomes available.
+
+`,
       });
     }
 

@@ -8,6 +8,8 @@ import WeatherCards from "@/components/location/WeatherCards";
 import AQICard from "@/components/location/AQICard";
 import EmergencyContacts from "@/components/location/EmergencyContacts";
 import AIRiskPanel from "@/components/location/AIRiskPanel";
+import AIDecisionCard from "@/components/location/AIDecisionCard";
+import AIDecisionTimeline from "@/components/location/AIDecisionTimeline";
 import ExecutiveReport from "@/components/location/ExecutiveReport";
 import AnalyticsDashboard from "@/components/location/AnalyticsDashboard";
 import DashboardKPIs from "@/components/location/DashboardKPIs";
@@ -77,10 +79,7 @@ export default function LocationPage() {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
 
-        setPosition({
-          lat,
-          lng,
-        });
+        setPosition({ lat, lng });
 
         try {
           // Weather
@@ -91,7 +90,7 @@ export default function LocationPage() {
           const aqiData = await getAQI(lat, lng);
           setAQI(aqiData);
 
-          // AI Report
+          // AI Predictive Report
           const ai = await getAIRisk({
             temp: weatherData.temp,
             humidity: weatherData.humidity,
@@ -167,10 +166,16 @@ export default function LocationPage() {
           contacts={emergencyContacts}
         />
 
-        <AIRiskPanel
-          report={aiReport}
-        />
+        {/* AI Predictive Intelligence */}
+        <AIRiskPanel report={aiReport} />
 
+        {/* AI Executive Decision */}
+        <AIDecisionCard report={aiReport} />
+
+        {/* AI Timeline */}
+        <AIDecisionTimeline />
+
+        {/* Executive Report */}
         <ExecutiveReport
           weather={weather}
           aqi={{
@@ -181,6 +186,7 @@ export default function LocationPage() {
           aiReport={aiReport}
         />
 
+        {/* Live KPIs */}
         <DashboardKPIs
           temp={weather.temp}
           humidity={weather.humidity}
@@ -188,6 +194,7 @@ export default function LocationPage() {
           aqi={aqi.aqi}
         />
 
+        {/* Historical Analytics */}
         <AnalyticsDashboard />
 
       </div>
